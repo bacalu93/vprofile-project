@@ -16,6 +16,7 @@ pipeline {
         NEXUS_CREDENTIAL_ID = 'nexuslogin'
         SONARSERVER = "sonarserver"
         SONARSCANNER = "sonarscanner"
+        NEXUSLOGIN_LOGIN = "nexuslogin"
     } 
     stages {
         stage('Preparation') {
@@ -81,7 +82,25 @@ pipeline {
                 }
             }
         }
-        
+        stage("UploadArtifact") {
+            steps {
+                 nexusArtifactUploader(
+        nexusVersion: 'nexus3',
+        protocol: 'http',
+        nexusUrl: '${NEXUSIP}:${NEXUSPORT',
+        groupId: 'QA',
+        version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+        repository: "${RELEASE_REPO}",
+        credentialsId: 'CredentialsId',
+        artifacts: [
+            [artifactId: "vproapp",
+             classifier: '',
+             file: 'target/vprofile-v2.war',
+             type: 'war']
+        ]
+     )
+            }
+        }
     }
 }
 
