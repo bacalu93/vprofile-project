@@ -16,7 +16,7 @@ pipeline {
         NEXUS_CREDENTIAL_ID = 'nexuslogin'
         SONARSERVER = "sonarserver"
         SONARSCANNER = "sonarscanner"
-        NEXUSLOGIN_LOGIN = "nexuslogin"
+        NEXUS_LOGIN = "nexuslogin"
     } 
     stages {
         stage('Preparation') {
