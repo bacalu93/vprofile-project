@@ -1,6 +1,6 @@
 def COLOR_MAP = [
-"SUCCES": "good",
-"FAILURE": "danger",   
+    "SUCCESS": "good", // Corrected typo 'SUCCES' to 'SUCCESS'
+    "FAILURE": "danger",   
 ]
 
 pipeline {
@@ -27,9 +27,7 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
-                    sh """
-                    envsubst < settings.xml.template > settings.xml
-                    """
+                    sh "envsubst < settings.xml.template > settings.xml"
                 }
             }
         }
@@ -77,75 +75,51 @@ pipeline {
                     -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
                     """
                 }
-               
             }
         }
         stage('Quality Gate') {
-    steps {
-        timeout(time: 15, unit: 'MINUTES') {
-            script {
-                def qg = waitForQualityGate() // This will return a QualityGate object
-                echo "Quality Gate Status: ${qg.status}"
-                if (qg.status != 'OK') {
-                    error "Pipeline aborted due to quality gate failure"
+            steps {
+                timeout(time: 15, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate() // This will return a QualityGate object
+                        echo "Quality Gate Status: ${qg.status}"
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure"
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-        stage("UploadArtifact") {
+        stage("UploadArtifact") { // Duplicated stage name corrected
             steps {
-                 nexusArtifactUploader(
-        nexusVersion: 'nexus3',
-        protocol: 'http',
-        nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
-        groupId: 'QA',
-        version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-        repository: "${RELEASE_REPO}",
-        credentialsId: "${NEXUS_LOGIN}",
-        artifacts: [
-            [artifactId: "vproapp",
-             classifier: '',
-             file: 'target/vprofile-v2.war',
-             type: 'war']
-                  ]
-               )
-            }
-
-// post {
-//                 always {
-//                     echo 'Slack Notification'
-//                     slackSend(
-//                         channel: '#jenkinscicd',
-//                         color: COLOR_MAP[currentBuild.currentResult],
-//                         message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL} "
-//                     )
-//                 }
-//             }
-            
-        }
-        stage("UploadArtifact"){
-            steps{
-                    nexusArtifactUploader(
-        nexusVersion: 'nexus3',
-        protocol: 'http',
-        nexusUrl: '${NEXUSIP}:${NEXUSPORT}',
-        groupId: 'QA',
-        version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-        repository: '${RELEASE_REPO}',
-        credentialsId: '${NEXUS_LOGIN}',
-        artifacts: [
-            [artifactId: "vproapp",
-             classifier: '',
-             file: 'target/vprofile-v2.war',
-             type: 'war']
-        ]
-     )
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
+                    groupId: 'QA',
+                    version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                    repository: "${RELEASE_REPO}",
+                    credentialsId: "${NEXUS_LOGIN}",
+                    artifacts: [
+                        [artifactId: "vproapp",
+                         classifier: '',
+                         file: 'target/vprofile-v2.war',
+                         type: 'war']
+                    ]
+                )
             }
         }
-        
     }
+    // post {
+    //     always {
+    //         echo 'Slack Notification'
+    //         slackSend(
+    //             channel: '#jenkinscicd',
+    //             color: COLOR_MAP[currentBuild.currentResult],
+    //             message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL} "
+    //         )
+    //     }
+    // }
 }
 
 
