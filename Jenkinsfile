@@ -26,6 +26,12 @@ pipeline {
 
     
     stages {
+
+        stage('Cleanup Workspace') {
+            steps {
+                 sh 'rm -rf build/ tmp/' // Adjust paths as necessary
+    }
+}
         stage('Preparation') {
             steps {
                 script {
