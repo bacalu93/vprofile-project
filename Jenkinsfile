@@ -23,6 +23,15 @@ pipeline {
         SONARSCANNER = "sonarscanner"
         NEXUS_LOGIN = "nexuslogin"
     } 
+
+
+    stages {
+        stage('Cleanup Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
     stages {
         stage('Preparation') {
             steps {
