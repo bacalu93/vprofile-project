@@ -131,7 +131,14 @@ pipeline {
                 }
             }
         }
-
+    stage("Cleanup Docker Images") {
+            steps {
+                script {
+                    // Remove all Docker images
+                    sh 'docker rmi $(docker images -q) -f'
+                }
+            }
+        }
 
 
     }
