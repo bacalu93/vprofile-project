@@ -1,8 +1,3 @@
-def COLOR_MAP = [
-    "SUCCESS": "good", // Corrected typo 'SUCCES' to 'SUCCESS'
-    "FAILURE": "danger",   
-]
-
 pipeline {
     agent any
     tools {
@@ -22,17 +17,13 @@ pipeline {
         SONARSERVER = "sonarserver"
         SONARSCANNER = "sonarscanner"
         NEXUS_LOGIN = "nexuslogin"
-    } 
-
-
+    }
     stages {
         stage('Cleanup Workspace') {
             steps {
                 cleanWs()
-                }
-           }
-    }
-    stages {
+            }
+        }
         stage('Preparation') {
             steps {
                 script {
@@ -99,7 +90,7 @@ pipeline {
                 }
             }
         }
-        stage("UploadArtifact") { // Duplicated stage name corrected
+        stage("UploadArtifact") {
             steps {
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
@@ -130,7 +121,3 @@ pipeline {
         }
     }
 }
-
-
-
-        
