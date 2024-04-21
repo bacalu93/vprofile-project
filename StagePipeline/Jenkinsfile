@@ -25,6 +25,9 @@ pipeline {
         registryCredential = "ecr:eu-central-1:awscreds"
         appRegistry = "018074730417.dkr.ecr.eu-central-1.amazonaws.com/vprofileappimg"
         voprofileRegistry = "https://018074730417.dkr.ecr.eu-central-1.amazonaws.com"
+        cluster = "vprostaging"
+        service = "vproappstatgesvc"
+
 
     } 
     stages {
@@ -100,25 +103,25 @@ pipeline {
                 }
             }
         }
-        stage("UploadArtifact") { // Duplicated stage name corrected
-            steps {
-                nexusArtifactUploader(
-                    nexusVersion: 'nexus3',
-                    protocol: 'http',
-                    nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
-                    groupId: 'QA',
-                    version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-                    repository: "${RELEASE_REPO}",
-                    credentialsId: "${NEXUS_LOGIN}",
-                    artifacts: [
-                        [artifactId: "vproapp",
-                         classifier: '',
-                         file: 'target/vprofile-v2.war',
-                         type: 'war']
-                    ]
-                )
-            }
-        }
+        // stage("UploadArtifact") { // Duplicated stage name corrected
+        //     steps {
+        //         nexusArtifactUploader(
+        //             nexusVersion: 'nexus3',
+        //             protocol: 'http',
+        //             nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
+        //             groupId: 'QA',
+        //             version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+        //             repository: "${RELEASE_REPO}",
+        //             credentialsId: "${NEXUS_LOGIN}",
+        //             artifacts: [
+        //                 [artifactId: "vproapp",
+        //                  classifier: '',
+        //                  file: 'target/vprofile-v2.war',
+        //                  type: 'war']
+        //             ]
+        //         )
+        //     }
+        // }
         stage("Build App Image") {
             steps {
                 script {
@@ -137,6 +140,12 @@ pipeline {
                 }
             }
         }
+    stage("Deploy to ECS staging")
+            steps{
+                withAWS(credentials : "awscreds", region: "eu-central-1") {
+                    sh " aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment"
+                }
+            }
     stage("Cleanup Docker Images") {
             steps {
                 script {
