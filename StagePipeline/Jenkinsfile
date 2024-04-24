@@ -15,7 +15,7 @@ pipeline {
         NEXUS_PASS = '19932'
         RELEASE_REPO = 'vprofile-release'
         CENTRAL_REPO = 'vpro-maven-central'
-        NEXUSIP = '172.31.28.189'
+        NEXUSIP = '172.31.29.11'
         NEXUSPORT = '8081'
         NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_CREDENTIAL_ID = 'nexuslogin'
@@ -103,25 +103,25 @@ pipeline {
                 }
             }
         }
-        // stage("UploadArtifact") { // Duplicated stage name corrected
-        //     steps {
-        //         nexusArtifactUploader(
-        //             nexusVersion: 'nexus3',
-        //             protocol: 'http',
-        //             nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
-        //             groupId: 'QA',
-        //             version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-        //             repository: "${RELEASE_REPO}",
-        //             credentialsId: "${NEXUS_LOGIN}",
-        //             artifacts: [
-        //                 [artifactId: "vproapp",
-        //                  classifier: '',
-        //                  file: 'target/vprofile-v2.war',
-        //                  type: 'war']
-        //             ]
-        //         )
-        //     }
-        // }
+        stage("UploadArtifact") { // Duplicated stage name corrected
+            steps {
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
+                    groupId: 'QA',
+                    version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                    repository: "${RELEASE_REPO}",
+                    credentialsId: "${NEXUS_LOGIN}",
+                    artifacts: [
+                        [artifactId: "vproapp",
+                         classifier: '',
+                         file: 'target/vprofile-v2.war',
+                         type: 'war']
+                    ]
+                )
+            }
+        }
         stage("Build App Image") {
             steps {
                 script {
@@ -140,13 +140,13 @@ pipeline {
                 }
             }
         }
-    stage("Deploy to ECS staging") {
-        steps {
-            withAWS(credentials: "awscreds", region: "eu-central-1") {
-            sh "aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment"
-        }
-    }
-}
+//     stage("Deploy to ECS staging") {
+//         steps {
+//             withAWS(credentials: "awscreds", region: "eu-central-1") {
+//             sh "aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment"
+//         }
+//     }
+// }
 
     stage("Cleanup Docker Images") {
             steps {
