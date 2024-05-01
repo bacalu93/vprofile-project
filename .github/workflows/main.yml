@@ -67,17 +67,12 @@ jobs:
           sed -i "s/db01/${{ secrets.RDS_ENDPOINT }}/" src/main/resources/application.properties
 
       - name: Build & Upload image to ECR
-        uses: appleboy/docker-ecr-action@master
-        with:
-          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          registry: ${{ secrets.REGISTRY }}  # Ensure this is correctly set in your secrets
-          repo: ${{ env.ECR_REPOSITORY }}  # Make sure ECR-REPOSITORY is defined in your env
-          region: ${{ env.AWS_REGION }}
-          tags: "latest,${{ github.run_number }}"
-          daemon_off: false
-          dockerfile: ./Dockerfile
-          context: ./
+        run: |
+          docker build -t myimage .
+          docker tag myimage ${{ secrets.REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+          docker tag myimage ${{ secrets.REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.run_number }}
+          docker push ${{ secrets.REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+          docker push ${{ secrets.REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.run_number }}
   
   Deploy:
     needs: BUILD_AND_PUBLISH
