@@ -1,9 +1,9 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:018074730417:task-definition/vproapp-task:2",
+    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:018074730417:task-definition/vproapp-actions-task:2",
     "containerDefinitions": [
         {
             "name": "vproapp",
-            "image": "018074730417.dkr.ecr.eu-central-1.amazonaws.com/vprofileappimg:latest",
+            "image": "018074730417.dkr.ecr.eu-central-1.amazonaws.com/vproappimg-actions",
             "cpu": 0,
             "portMappings": [
                 {
@@ -24,7 +24,7 @@
                 "logDriver": "awslogs",
                 "options": {
                     "awslogs-create-group": "true",
-                    "awslogs-group": "/ecs/vproapp-task",
+                    "awslogs-group": "/ecs/vproapp-actions-task",
                     "awslogs-region": "eu-central-1",
                     "awslogs-stream-prefix": "ecs"
                 },
@@ -33,7 +33,7 @@
             "systemControls": []
         }
     ],
-    "family": "vproapp-task",
+    "family": "vproapp-actions-task",
     "taskRoleArn": "arn:aws:iam::018074730417:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::018074730417:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
@@ -83,7 +83,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-04-26T07:50:00.529Z",
+    "registeredAt": "2024-05-01T14:26:04.661Z",
     "registeredBy": "arn:aws:iam::018074730417:user/Andrei-Bacalu",
     "tags": []
 }
