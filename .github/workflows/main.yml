@@ -2,7 +2,7 @@ name: Hprofile Actions
 
 on: [push,workflow_dispatch]
 env: 
-  AWS_REGION: us-central-1
+  AWS_REGION: eu-central-1
   ECR-REPOSITORY: vprofileappimg
   ECS_SERVICE: vproapp-actions-svc
   ECS_CLUSTER: vpros-cluster-actions
