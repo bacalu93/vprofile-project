@@ -46,12 +46,12 @@ jobs:
             -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
 
       - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        timeout-minutes: 5
 
   BUILD_AND_PUBLISH:
     needs: Testing
@@ -97,6 +97,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Fill in the new image ID in the Amazon ECS task definition
+        id: render-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
@@ -106,7 +107,7 @@ jobs:
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: false
