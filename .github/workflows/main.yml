@@ -5,7 +5,7 @@ env:
   AWS_REGION: eu-central-1
   ECR-REPOSITORY: vprofileappimg
   ECS_SERVICE: vproapp-actions
-  ECS_CLUSTER: vprostaging
+  ECS_CLUSTER: vpros-cluster-actions
   ECS_TASK_DEFINITION: aws-files/taskdeffile.json
   CONTAINER_NAME: vproapp
 
