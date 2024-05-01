@@ -71,10 +71,10 @@ jobs:
         with:
           access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          registry: ${{ secrets.REGISTRY }}
-          repo: ${{ env.ECR_REPOSITORY }}
+          registry: ${{ secrets.REGISTRY }}  # Ensure this is correctly set in your secrets
+          repo: ${{ env.ECR_REPOSITORY }}  # Make sure ECR-REPOSITORY is defined in your env
           region: ${{ env.AWS_REGION }}
-          tags: latest,${{ github.run_number }}
+          tags: "latest,${{ github.run_number }}"
           daemon_off: false
           dockerfile: ./Dockerfile
           context: ./
@@ -101,9 +101,9 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION}}
-          container-name: ${{ env.CONTAINER_NAME}}
-          image: ${{ secrets.REGYSTRY}}/${{env.ECR_REPOSITORY}}:${{ github.run_number }}
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ secrets.REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.run_number }}
   
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
